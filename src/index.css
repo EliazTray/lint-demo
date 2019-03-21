@@ -6,3 +6,7 @@ A {
 UL LI {
   color: #F0f;
 }
+
+button {
+  position: absolute;
+}

@@ -8,22 +8,24 @@ const signale = require('signale')
 const checkSelectorTypeCase = require('../rules/selector-type-case')
 
 const from = path.resolve(__dirname, './index.css')
-const to = path.resolve(__dirname, './output.css')
+const to = path.resolve(__dirname, './output-base.css')
 
 const source = fs.readFileSync(from)
 
-function parse (str) {
+function parse (str, needFix = false) {
   const root = postcss.parse(str)
   // 遍历每一个 rules
-  // checkSelectorTypeCase(root, true)
-  checkSelectorTypeCase(root)
+  checkSelectorTypeCase(root, needFix)
 
-  // get result
-  try {
-    fs.writeFileSync(to, root.toString())
-  } catch (error) {
-    signale.error(error)
+  // if fixed, get result
+  if (needFix) {
+    try {
+      fs.writeFileSync(to, root.toString())
+    } catch (error) {
+      signale.error(error)
+    }
   }
 }
 
+// parse(source, true)
 parse(source)
