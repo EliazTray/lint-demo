@@ -10,7 +10,8 @@
     "test": "npm run lint && jest",
     "lint": "standard",
     "prepublishOnly": "npm run build",
-    "build": "bili"
+    "build": "bili",
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "url": "eliatray/lint-demo",
@@ -18,14 +19,21 @@
   },
   "author": "eliatray<944126009@qq.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "lodash-es": "^4.17.11",
+    "postcss": "^7.0.14",
+    "postcss-selector-parser": "^6.0.2"
+  },
   "devDependencies": {
-    "prettier": "^1.15.2",
-    "standard": "^12.0.0",
+    "bili": "^3.3.0",
+    "chalk": "^2.4.2",
+    "husky": "^1.0.0-rc.13",
     "jest": "^23.6.0",
     "lint-staged": "^7.2.0",
-    "husky": "^1.0.0-rc.13",
-    "bili": "^3.3.0"
+    "prettier": "^1.15.2",
+    "raw-loader": "^2.0.0",
+    "signale": "^1.4.0",
+    "standard": "^12.0.0"
   },
   "standard": {
     "env": "jest"

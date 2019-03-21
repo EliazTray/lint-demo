@@ -1,21 +1,6 @@
 # lint-demo
 
-[![NPM version](https://badgen.net/npm/v/lint-demo)](https://npmjs.com/package/lint-demo) [![NPM downloads](https://badgen.net/npm/dm/lint-demo)](https://npmjs.com/package/lint-demo) [![CircleCI](https://badgen.net/circleci/github/eliatray/lint-demo/master)](https://circleci.com/gh/eliatray/lint-demo/tree/master)
-
-## Install
-
-```bash
-yarn add lint-demo
-```
-
-## Usage
-
-```js
-const lintDemo = require('lint-demo')
-
-lintDemo()
-//=> foo
-```
+> How to make a linter tool from zero.
 
 ## Contributing
 
