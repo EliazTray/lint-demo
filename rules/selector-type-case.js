@@ -15,7 +15,10 @@ module.exports = function checkSelectorTypeCase (root, { ruleName, expectation, 
         }
 
         if (fix) {
-          rule.selector = rule.selector.slice(0, sourceIndex) + expectedValue + rule.selector.slice(sourceIndex + value.length)
+          rule.selector =
+            rule.selector.slice(0, sourceIndex) +
+            expectedValue +
+            rule.selector.slice(sourceIndex + value.length)
 
           return
         }

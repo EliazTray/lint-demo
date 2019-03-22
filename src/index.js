@@ -1,10 +1,11 @@
 const postcss = require('postcss')
 const fs = require('fs')
-const path = require('path')
+// const path = require('path')
 // const chalk = require('chalk')
-const { dump } = require('dumper.js')
+// const { dump } = require('dumper.js')
 const signale = require('signale')
 const cosmiconfig = require('cosmiconfig')
+const globby = require('globby')
 
 const checkSelectorTypeCase = require('../rules/selector-type-case')
 const checkColorHexCase = require('../rules/color-hex-case')
@@ -14,8 +15,8 @@ const keyToFunc = {
   'color-hex-case': checkColorHexCase
 }
 
-function parse (str, ruleConfig, needFix) {
-  const root = postcss.parse(str)
+function parse (sourcePath, ruleConfig, needFix) {
+  const root = postcss.parse(fs.readFileSync(sourcePath))
 
   // 遍历每个 rules
   Object.entries(ruleConfig).forEach(([key, value]) => {
@@ -28,12 +29,13 @@ function parse (str, ruleConfig, needFix) {
     }
   })
 
-  return root
+  checkFix(root, sourcePath, needFix)
 }
 
-function getConfig (configName = 'clint') {
+// 获取 clint 配置
+function getConfig (path = process.cwd(), configName = 'clint') {
   const explorer = cosmiconfig(configName)
-  const searchResult = explorer.searchSync()
+  const searchResult = explorer.searchSync(path)
 
   if (!searchResult) {
     throw new TypeError('Please provide the config')
@@ -41,6 +43,7 @@ function getConfig (configName = 'clint') {
   return searchResult.config
 }
 
+// check needFix？
 function checkFix (root, to, needFix = false) {
   // if fixed, get result
   if (needFix) {
@@ -52,14 +55,14 @@ function checkFix (root, to, needFix = false) {
   }
 }
 
-function init (needFix = false) {
-  const from = path.resolve(__dirname, './index.css')
-  const to = path.resolve(__dirname, './output-cosmiconfig.css')
-  const source = fs.readFileSync(from)
-  const config = getConfig()
+module.exports = function (path, options) {
+  const config = getConfig(options.config)
+  const matchFiles = globby.sync(path)
 
-  dump(config)
-  checkFix(parse(source, config, needFix), to, needFix)
+  matchFiles.forEach(file => {
+    parse(file, config, options.fix)
+  })
 }
 
-init(true)
+// u can transform one rule function to plugin.
+// postcss([ /* your plugin  */]).process(fs.readFileSync(path), { from: file }).toString()
