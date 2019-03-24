@@ -1,0 +1,234 @@
+export { default as theme } from './src/index'
+import { Head, Image } from 'mdx-deck'
+import nightOwl from 'prism-react-renderer/themes/nightOwl'
+import { CodeSurfer } from 'mdx-deck-code-surfer'
+import { LayoutNoFooter, Layout, Split, BGImage } from './src/index'
+
+<Head>
+  <title>Linter</title>
+</Head>
+
+export default Layout
+
+# Linter
+
+> author eliaztray
+
+---
+
+# 主题
+
+1. 你听说或者使用过哪些 linter ?
+
+2. 你清楚它们是如何使用的吗 ?
+
+3. 你清楚它们是如何运作的吗 ?
+
+4. 制作一个简化版的 linter.
+
+---
+
+export default Layout
+
+# 你听说或者使用过哪些 linter ?
+
+---
+
+export default Split
+
+- js
+- `jshint`
+- `jslint`
+- `eslint`
+- `tslint`
+
+* css
+* `stylelint`
+* ..more
+
+---
+
+# 你清楚它们是如何使用的吗 ?
+
+---
+
+## step 1
+
+Add dependencies in your project
+
+---
+
+## step 2
+
+Create a config like `.eslintrc`, `.eslint.js`, or in packageProps.
+
+---
+
+## step 3
+
+Combine with `husky` & `lint-staged` in git hooks suck like `pre-commit`.
+
+---
+
+# 你清楚它们是如何运作的吗 ?
+
+---
+
+## 开始制作一个简单 linter (BASE ON CSS)
+
+---
+
+export default Split
+
+使用 4 个分支讲述 linter 实现
+
+- step-1-base
+- step-2-cosmiconfig
+- step-3-cli
+- step-4-unittest
+
+---
+
+## step-1-base
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  title="selector-type-case"
+  lang="js"
+  code={`
+      const parseSelector = require('../lib/parseSelector')
+      const reportMessage = require('../utils/report')\n
+      module.exports = function checkSelectorTypeCase (root, needfix = false, checkName = 'lower') {
+      root.walkRules(rule => {
+        parseSelector(rule.selector, selectorAST => {
+          selectorAST.walkTags(tag => {
+            const value = tag.value
+            const sourceIndex = tag.sourceIndex
+            const expectedValue = checkName === 'lower'
+              ? value.toLowerCase()
+              : value.toUpperCase()
+            if (value === expectedValue) {
+              return
+            }
+            if (needfix) {
+              rule.selector =
+                rule.selector.slice(0, sourceIndex) +
+                expectedValue +
+                rule.selector.slice(sourceIndex + value.length)
+              return
+            }
+            reportMessage(rule, 'selector-type-case', sourceIndex, expectedValue, value)
+          })
+        })
+      })
+  `}
+  steps={[
+    { notes: "rules for css"},
+    { lines: [6], notes: "walkRules for root" },
+    { lines: [7], notes: "parse selector for rule" },
+    { lines: [24], notes: "report message if not need fix" },
+  ]}
+/>
+
+---
+
+## step-2-cosmiconfig
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  title="Get config"
+  lang="js"
+  code={`
+    const cosmiconfig = require('cosmiconfig')\n
+    function getConfig (configName = 'clint') {
+      const explorer = cosmiconfig(configName)
+      const searchResult = explorer.searchSync()
+      if (!searchResult) {
+        throw new TypeError('Please provide the config')
+      }
+      return searchResult.config
+    }
+  `}
+  steps={[
+    { notes: "get config for our custom name `clint`"},
+    { lines: [5], notes: "init explorer" },
+    { lines: [8], notes: "throw an error" },
+  ]}
+/>
+
+---
+
+## step-3-cli
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  title="Init CLI"
+  lang="js"
+  code={`
+    #!/usr/bin/env node
+    const cac = require('cac')
+    const { version } = require('./package.json')
+    const main = require('./src/index')
+    const cli = cac()\n
+    cli
+      .command('<files>', 'use globby pattern match the files')
+      .option('--config <configPath>', 'specify the clint config')
+      .option('--fix', 'fix the error')
+      .allowUnknownOptions()
+      .action((path, options) => {
+        main(path, options)
+      })\n
+    cli.help()
+    cli.version(version)
+    cli.parse()
+  `}
+  steps={[
+    { lines: [9], notes: "specify input files" },
+    { range: [10, 12], notes: "accept options" },
+  ]}
+/>
+
+---
+
+## step-4-unittest
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  title="Add unit test"
+  lang="js"
+  code={require('!raw-loader!../test/index.test.js').default}
+  steps={[
+    { notes: "add test"},
+    { range: [27, 44], notes: "test for rules `seletor-type-case`" },
+    { tokens: { 28: [4, 5, 6, 7, 8, 9]} },
+    { tokens: { 30: [3, 4, 5, 6, 7]} },
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  lang="css"
+  code={require('!raw-loader!../snippets/expected.css').default}
+  steps={[
+    { tokens: { 1: [0] },  notes: "`A` tag was transformed to lower case"},
+    { tokens: { 6: [0, 1] }, notes: "`UL LI` tags were transformed to lower case"},
+  ]}
+/>
+
+---
+
+## [website](website)
+
+---
+
+# Thank You!
