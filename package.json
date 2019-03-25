@@ -13,7 +13,8 @@
     "prepublishOnly": "npm run build",
     "build": "bili",
     "dev": "nodemon src/index.js",
-    "slide": "mdx-deck website/deck.mdx"
+    "slide": "mdx-deck website/deck.mdx",
+    "slide:build": "mdx-deck build website/deck.mdx --no-html"
   },
   "repository": {
     "url": "eliatray/lint-demo",

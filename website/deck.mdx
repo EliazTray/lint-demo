@@ -217,11 +217,11 @@ export default Split
 
 <CodeSurfer
   theme={nightOwl}
-  lang="css"
-  code={require('!raw-loader!../snippets/expected.css').default}
+  lang="diff"
+  code={require('!raw-loader!../snippets/diff').default}
   steps={[
-    { tokens: { 1: [0] },  notes: "`A` tag was transformed to lower case"},
-    { tokens: { 6: [0, 1] }, notes: "`UL LI` tags were transformed to lower case"},
+    { range: [1, 2],  notes: "`A` tag was transformed to lower case"},
+    { range: [7, 8], notes: "`UL LI` tags were transformed to lower case"},
   ]}
 />
 

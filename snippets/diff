@@ -1,9 +1,11 @@
-a {
+-A {
++a {
   color: #FFF;
   font-size: 12px;
 }
 
-ul li {
+-UL LI {
++ul li {
   color: #F0f;
 }
 
