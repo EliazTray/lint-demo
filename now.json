@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "mdx-deck",
+  "name": "lint-demo",
   "builds": [{ "src": "website/deck.mdx", "use": "@now/mdx-deck" }],
   "alias": ["lint.eliaztray.cn"]
 }
