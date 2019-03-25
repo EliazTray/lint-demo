@@ -14,7 +14,8 @@
     "build": "bili",
     "dev": "nodemon src/index.js",
     "slide": "mdx-deck website/deck.mdx",
-    "slide:build": "mdx-deck build website/deck.mdx --no-html"
+    "slide:build": "mdx-deck build website/deck.mdx --no-html",
+    "now-build": "npm run slide:build"
   },
   "repository": {
     "url": "eliatray/lint-demo",

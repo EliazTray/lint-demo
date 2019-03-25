@@ -1,6 +1,8 @@
 {
   "version": 2,
   "name": "lint-demo",
-  "builds": [{ "src": "website/deck.mdx", "use": "@now/mdx-deck" }],
+  "builds": [
+    { "src": "package.json", "use": "@now/static-build", "config": { "distDir": "dist" } }
+  ],
   "alias": ["lint.eliaztray.cn"]
 }
