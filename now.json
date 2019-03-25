@@ -4,5 +4,5 @@
   "builds": [
     { "src": "package.json", "use": "@now/static-build", "config": { "distDir": "dist" } }
   ],
-  "alias": ["lint.eliaztray.cn"]
+  "alias": "lint.eliaztray.cn"
 }
