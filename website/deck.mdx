@@ -1,5 +1,5 @@
 export { default as theme } from './src/index'
-import { Head, Image } from 'mdx-deck'
+import { Head, Image, Notes } from 'mdx-deck'
 import nightOwl from 'prism-react-renderer/themes/nightOwl'
 import { CodeSurfer } from 'mdx-deck-code-surfer'
 import { LayoutNoFooter, Layout, Split, BGImage } from './src/index'
@@ -26,6 +26,13 @@ export default Layout
 
 4. 制作一个简化版的 linter.
 
+<Notes>
+  <p>
+    {' '}
+    1. 4 是我们这次分享的重点，希望大家通过这次分享，可以帮助大家大概知道 一个 linter 是如何实现的。
+  </p>
+</Notes>
+
 ---
 
 export default Layout
@@ -37,18 +44,31 @@ export default Layout
 export default Split
 
 - js
-- `jshint`
 - `jslint`
+- `jshint`
 - `eslint`
 - `tslint`
 
 * css
+* `csslint`
 * `stylelint`
 * ..more
+
+<Notes>
+  <li>
+    {' '}
+    html template 这块还有 vuter, 会有一些linter的校验，功能是基于 postcss-html 这个 plugin 支持的
+  </li>
+  <li> 这里可能有人会说 prettier, 其实 prettier 只算得上是 code formatter。</li>
+</Notes>
 
 ---
 
 # 你清楚它们是如何使用的吗 ?
+
+<Notes>
+  <li> 想必大家觉得很简单了。</li>
+</Notes>
 
 ---
 
@@ -58,9 +78,35 @@ Add dependencies in your project
 
 ---
 
+<CodeSurfer
+  theme={nightOwl}
+  lang="bash"
+  code={`
+    yarn add eslint eslint-config-xo -D\n\n
+    npm i eslint eslint-config-xo -D
+  `}
+/>
+
+---
+
 ## step 2
 
-Create a config like `.eslintrc`, `.eslint.js`, or in packageProps.
+Create a config like `.eslintrc`, `.eslintrc.js`, or in `packageProps`.
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  lang="json"
+  code={`
+    {
+      "extends": [
+        "plugin:vue/essential",
+        "@vue/prettier"
+      ]
+    }
+  `}
+/>
 
 ---
 
@@ -70,7 +116,49 @@ Combine with `husky` & `lint-staged` in git hooks like `pre-commit`.
 
 ---
 
+<CodeSurfer
+  theme={nightOwl}
+  lang="json"
+  code={`
+  {
+    "husky": {
+      "hooks": {
+        "pre-commit": "lint-staged"
+      }
+    },
+    "lint-staged": {
+      "*.js": [
+        "prettier --write",
+        "standard --fix",
+        "git add"
+      ],
+      "*.{json,md}": [
+        "prettier --write",
+        "git add"
+      ]
+    }
+  }
+  `}
+/>
+
+---
+
 # 你清楚它们是如何运作的吗 ?
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  lang="bash"
+  code={`
+    eslint . --fix
+  `}
+/>
+
+<Notes>
+  <li>当我们从命令行中键入 这串字符的时候 他背后实际上执行了什么样的操作呢，接下来我们就会稍微具体的讲下这个过程是如何实现的</li>
+  <li>在深入代码前，让我们说下 AST 这个东西。 </li>
+</Notes>
 
 ---
 
@@ -88,6 +176,17 @@ export default Split
 - step-4-unittest
 
 ---
+
+<Notes>
+  <li>为什么按照4个分支来讲，一般来说。</li>
+  <ol>转换函数</ol>
+  <ol>规则</ol>
+  <ol>有良好的信息输出，良好的信息输出标识，错误提示和修复建议 </ol>
+  <ol>可自定义配置文件 </ol>
+  <ol>cli, 命令行工具 </ol>
+  <ol>单元测试，随着功能增多，我们需要保证代码的质量</ol>
+  <li>接下来就用一些代码来讲述这个过程</li>
+</Notes>
 
 ## step-1-base
 
@@ -125,16 +224,41 @@ export default Split
       })
   `}
   steps={[
-    { notes: "rules for css"},
-    { lines: [6], notes: "walkRules for root" },
-    { lines: [7], notes: "parse selector for rule" },
-    { lines: [24], notes: "report message if not need fix" },
+    { notes: 'rules for css' },
+    { lines: [6], notes: 'walkRules for root' },
+    { lines: [7], notes: 'parse selector for rule' },
+    { lines: [24], notes: 'report message if not need fix' }
   ]}
 />
 
 ---
 
 ## step-2-cosmiconfig
+
+
+<Notes>
+  <li>前面看到有 .eslintrc .eslint.config.js 这些配置文件，里面定义的就是他的配置</li>
+</Notes>
+
+
+---
+
+<CodeSurfer
+  theme={nightOwl}
+  title="SearchPlaces"
+  lang="json"
+  code={`
+    [
+      'package.json'
+      '.eslintrc',
+      '.eslintrc.json',
+      '.eslintrc.yaml',
+      '.eslintrc.yml',
+      '.eslintrc.js',
+      '.eslint.config.js'
+    ]
+  `}
+/>
 
 ---
 
@@ -154,9 +278,9 @@ export default Split
     }
   `}
   steps={[
-    { notes: "get config for our custom name `clint`"},
-    { lines: [5], notes: "init explorer" },
-    { lines: [8], notes: "throw an error" },
+    { notes: 'get config for our custom name `clint`' },
+    { lines: [5], notes: 'init explorer' },
+    { lines: [8], notes: 'throw an error' }
   ]}
 />
 
@@ -189,8 +313,8 @@ export default Split
     cli.parse()
   `}
   steps={[
-    { lines: [9], notes: "specify input files" },
-    { range: [10, 12], notes: "accept options" },
+    { lines: [9], notes: 'specify input files' },
+    { range: [10, 12], notes: 'accept options' }
   ]}
 />
 
@@ -206,10 +330,10 @@ export default Split
   lang="js"
   code={require('!raw-loader!../test/index.test.js').default}
   steps={[
-    { notes: "add test"},
-    { range: [27, 44], notes: "test for rules `seletor-type-case`" },
-    { tokens: { 28: [4, 5, 6, 7, 8, 9]} },
-    { tokens: { 30: [3, 4, 5, 6, 7]} },
+    { notes: 'add test' },
+    { range: [27, 44], notes: 'test for rules `seletor-type-case`' },
+    { tokens: { 28: [4, 5, 6, 7, 8, 9] } },
+    { tokens: { 30: [3, 4, 5, 6, 7] } }
   ]}
 />
 
@@ -220,14 +344,27 @@ export default Split
   lang="diff"
   code={require('!raw-loader!../snippets/diff').default}
   steps={[
-    { range: [1, 2],  notes: "`A` tag was transformed to lower case"},
-    { range: [7, 8], notes: "`UL LI` tags were transformed to lower case"},
+    { range: [1, 2], notes: '`A` tag was transformed to lower case' },
+    { range: [7, 8], notes: '`UL LI` tags were transformed to lower case' }
   ]}
 />
 
 ---
 
+
+1. 你听说或者使用过哪些 linter ?
+
+2. 你清楚它们是如何使用的吗 ?
+
+3. 你清楚它们是如何运作的吗 ?
+
+4. 制作一个简化版的 linter.
+
+---
+
 ## [https://lint.eliaztray.cn](https://lint.eliaztray.cn)
+
+## [https://github.com/eliaztray/lint-demo](https://github.com/eliaztray/lint-demo)
 
 ---
 
