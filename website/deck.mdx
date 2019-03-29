@@ -16,19 +16,18 @@ export default Layout
 
 ---
 
-# 主题
+## 主题
 
-1. 你听说或者使用过哪些 linter ?
+1. 你使用过哪些 linter ?
 
-2. 你清楚它们是如何使用的吗 ?
+2. 你知道如何使用它们吗?
 
-3. 你清楚它们是如何运作的吗 ?
+3. 你清楚它们是如何运作的吗?
 
 4. 制作一个简化版的 linter.
 
 <Notes>
   <p>
-    {' '}
     1. 4 是我们这次分享的重点，希望大家通过这次分享，可以帮助大家大概知道 一个 linter 是如何实现的。
   </p>
 </Notes>
@@ -37,7 +36,15 @@ export default Layout
 
 export default Layout
 
-# 你听说或者使用过哪些 linter ?
+## 你使用过哪些 linter ?
+
+<Notes>
+  <li>
+    {' '}
+    html template 这块还有 vuter, 会有一些linter的校验，功能是基于 postcss-html 这个 plugin 支持的
+  </li>
+  <li> 这里可能有人会说 prettier, 其实 prettier 只算得上是 code formatter。</li>
+</Notes>
 
 ---
 
@@ -54,17 +61,9 @@ export default Split
 * `stylelint`
 * ..more
 
-<Notes>
-  <li>
-    {' '}
-    html template 这块还有 vuter, 会有一些linter的校验，功能是基于 postcss-html 这个 plugin 支持的
-  </li>
-  <li> 这里可能有人会说 prettier, 其实 prettier 只算得上是 code formatter。</li>
-</Notes>
-
 ---
 
-# 你清楚它们是如何使用的吗 ?
+## 你知道如何使用它们吗?
 
 <Notes>
   <li> 想必大家觉得很简单了。</li>
@@ -72,7 +71,7 @@ export default Split
 
 ---
 
-## step 1
+### step 1
 
 Add dependencies in your project
 
@@ -89,7 +88,7 @@ Add dependencies in your project
 
 ---
 
-## step 2
+### step 2
 
 Create a config like `.eslintrc`, `.eslintrc.js`, or in `packageProps`.
 
@@ -110,7 +109,7 @@ Create a config like `.eslintrc`, `.eslintrc.js`, or in `packageProps`.
 
 ---
 
-## step 3
+### step 3
 
 Combine with `husky` & `lint-staged` in git hooks like `pre-commit`.
 
@@ -143,7 +142,7 @@ Combine with `husky` & `lint-staged` in git hooks like `pre-commit`.
 
 ---
 
-# 你清楚它们是如何运作的吗 ?
+## 你清楚它们是如何运作的吗?
 
 ---
 
@@ -162,7 +161,7 @@ Combine with `husky` & `lint-staged` in git hooks like `pre-commit`.
 
 ---
 
-## 开始制作一个简单 linter (BASE ON CSS)
+### 开始制作一个简单 linter (BASE ON CSS)
 
 ---
 
@@ -188,7 +187,7 @@ export default Split
   <li>接下来就用一些代码来讲述这个过程</li>
 </Notes>
 
-## step-1-base
+### step-1-base
 
 ---
 
@@ -196,44 +195,29 @@ export default Split
   theme={nightOwl}
   title="selector-type-case"
   lang="js"
-  code={`
-      const parseSelector = require('../lib/parseSelector')
-      const reportMessage = require('../utils/report')\n
-      module.exports = function checkSelectorTypeCase (root, needfix = false, checkName = 'lower') {
-      root.walkRules(rule => {
-        parseSelector(rule.selector, selectorAST => {
-          selectorAST.walkTags(tag => {
-            const value = tag.value
-            const sourceIndex = tag.sourceIndex
-            const expectedValue = checkName === 'lower'
-              ? value.toLowerCase()
-              : value.toUpperCase()
-            if (value === expectedValue) {
-              return
-            }
-            if (needfix) {
-              rule.selector =
-                rule.selector.slice(0, sourceIndex) +
-                expectedValue +
-                rule.selector.slice(sourceIndex + value.length)
-              return
-            }
-            reportMessage(rule, 'selector-type-case', sourceIndex, expectedValue, value)
-          })
-        })
-      })
-  `}
+  code={require('!raw-loader!../snippets/selector-type-case.snippet.js').default}
   steps={[
     { notes: 'rules for css' },
-    { lines: [6], notes: 'walkRules for root' },
-    { lines: [7], notes: 'parse selector for rule' },
-    { lines: [24], notes: 'report message if not need fix' }
+    { lines: [9], notes: 'walkRules for root' },
+    { lines: [10], notes: 'get description of selector' },
+    { lines: [11], notes: 'get tags of the selector description' },
+    { lines: [12], notes: 'get value' },
+    { range: [26, 32], notes: 'report message if not need fix' }
   ]}
 />
 
 ---
 
-## step-2-cosmiconfig
+<CodeSurfer
+  theme={nightOwl}
+  title="reportMessage"
+  lang="js"
+  code={require('!raw-loader!../snippets/report.snippet.js').default}
+/>
+
+---
+
+### step-2-cosmiconfig
 
 
 <Notes>
@@ -286,7 +270,7 @@ export default Split
 
 ---
 
-## step-3-cli
+### step-3-cli
 
 ---
 
@@ -320,7 +304,7 @@ export default Split
 
 ---
 
-## step-4-unittest
+### step-4-unittest
 
 ---
 
@@ -328,12 +312,11 @@ export default Split
   theme={nightOwl}
   title="Add unit test"
   lang="js"
-  code={require('!raw-loader!../test/index.test.js').default}
+  code={require('!raw-loader!../snippets/test.snippets.js').default}
   steps={[
     { notes: 'add test' },
-    { range: [27, 44], notes: 'test for rules `seletor-type-case`' },
-    { tokens: { 28: [4, 5, 6, 7, 8, 9] } },
-    { tokens: { 30: [3, 4, 5, 6, 7] } }
+    { tokens: { 3: [4, 5, 6, 7, 8, 9] } },
+    { tokens: { 9: [3, 4, 5, 6, 7] } }
   ]}
 />
 
@@ -352,19 +335,19 @@ export default Split
 ---
 
 
-1. 你听说或者使用过哪些 linter ?
+1. 你使用过哪些 linter ?
 
-2. 你清楚它们是如何使用的吗 ?
+2. 你知道如何使用它们吗?
 
-3. 你清楚它们是如何运作的吗 ?
+3. 你清楚它们是如何运作的吗?
 
 4. 制作一个简化版的 linter.
 
 ---
 
-## [https://lint.eliaztray.cn](https://lint.eliaztray.cn)
+### [https://lint.eliaztray.cn](https://lint.eliaztray.cn)
 
-## [https://github.com/eliaztray/lint-demo](https://github.com/eliaztray/lint-demo)
+### [https://github.com/eliaztray/lint-demo](https://github.com/eliaztray/lint-demo)
 
 ---
 

@@ -51,7 +51,8 @@
     "styled-components": "^4.2.0"
   },
   "standard": {
-    "env": "jest"
+    "env": "jest",
+    "ignore": "snippets"
   },
   "jest": {
     "testEnvironment": "node"
